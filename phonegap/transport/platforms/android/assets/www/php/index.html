@@ -1,0 +1,50 @@
+<html>
+  <head>
+    <script language="javascript" type="text/javascript" src="//code.jquery.com/jquery-1.11.3.min.js"></script>
+  </head>
+  <body>
+  <h3>Output: </h3>
+  <div id="output"></div>
+
+  <script id="source" language="javascript" type="text/javascript">
+     
+    var qry = "stop_id="+'010005';
+    $.ajax({
+              url: 'get_routes.php',  //the script to call to get data          
+              data: qry,                          //you can insert url argumnets here to pass to php
+              dataType: 'json',                   //data format      
+              success: function(routes)          //on recieve of reply
+              {
+          
+		  
+		  /*for (var i in routes)
+          {
+             var data = routes[i];
+             var route_short_name = data[0];
+             var route_color = data[1];
+             var route_text_color = data[2];
+             var stop_id = data[3];
+             var stop_name = data[4];
+             var stop_lat = data[5];
+             var stop_lon = data[6];
+             $('#output').append("<b> route_short_name: </b>"+route_short_name+"<b> route_color: </b>"+route_color+"<b> route_text_color: </b>"+route_text_color+"<b> stop_id: </b>"+stop_id+"<b> stop_name: </b>"+stop_name+"<b> stop_lat: </b>"+stop_lat+"<b> stop_lon: </b>"+stop_lon+"<br>"); 
+          }*/
+		  
+	$.each( routes, function( key, value ) {
+		
+	console.log(value[0]);
+		
+		
+	});		  
+		  
+		  
+              }
+
+          });
+
+  </script>
+  </body>
+</html>
+
+
+

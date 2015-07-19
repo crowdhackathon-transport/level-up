@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1,user-scalable=no,maximum-scale=1,width=device-width">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#000000">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>#Athens</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.css">
+    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.css">
+    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/MarkerCluster.Default.css">
+    <link rel="stylesheet" href="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.css">
+    <link rel="stylesheet" href="assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.css">
+    <link rel="stylesheet" href="assets/css/app.css">
+
+    <link rel="stylesheet" href="google.css">
+
+    <!-- pi css //////////////////////////////////////////////////// -->
+    <link rel="stylesheet" href="assets/css/pi.css">
+	<!-- pi css //////////////////////////////////////////////////// -->
+    <link rel="apple-touch-icon" sizes="76x76" href="assets/img/favicon-76.png">
+    <link rel="apple-touch-icon" sizes="120x120" href="assets/img/favicon-120.png">
+    <link rel="apple-touch-icon" sizes="152x152" href="assets/img/favicon-152.png">
+    <link rel="icon" sizes="196x196" href="assets/img/favicon-196.png">
+    <link rel="icon" type="image/x-icon" href="assets/img/favicon.ico">
+
+	<!-- <script> var vol=0;</script> -->
+  </head>
+
+  <body class="">
+
+	<div id="fb-root"></div>
+	<script>
+	  window.fbAsyncInit = function() {
+		FB.init({
+		  appId      : '880567268675137',
+		  xfbml      : true,
+		  version    : 'v2.4'
+		});
+	  };
+
+	  (function(d, s, id){
+		 var js, fjs = d.getElementsByTagName(s)[0];
+		 if (d.getElementById(id)) {return;}
+		 js = d.createElement(s); js.id = id;
+		 js.src = "//connect.facebook.net/en_US/sdk.js";
+		 fjs.parentNode.insertBefore(js, fjs);
+	   }(document, 'script', 'facebook-jssdk'));
+	</script>
+
+
+<!--
+	<div id="loader-wrapper">
+		<div id="loader"></div>
+		<div class="loader-section section-left"></div>
+		<div class="loader-section section-right"></div>
+	</div>
+-->
+
+
+	<!-- top bar //////////////////////////////////////////////////// -->
+	<!-- top bar //////////////////////////////////////////////////// -->
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <div class="navbar-icon-container">
+			<!-- <a class="navbar-brand" href="#" onClick="window.location.reload()">#Athens</a> -->
+			<a class="navbar-brand" href="#" onClick="hideallbutmap()">#Athens</a>
+            <a href="#" class="navbar-icon pull-right" id="nav-toggle-btn"><i class="fa fa-bars fa-lg white"></i><span class="hidden-xs nav-text" style="text-decoration:none;color:#eee;padding-right:10px;">&nbsp;&nbsp; Menu</span></a>
+            <a href="#" class="navbar-icon pull-right visible-xs" id="multi-nav-toggle-btn"><i class="fa fa-search fa-lg white"></i></a>
+          </div>
+        </div>
+        <div class="navbar-collapse collapse">
+          <form class="navbar-form navbar-right" role="search">
+            <div class="form-group has-feedback">
+                <input id="searchbox" type="text" placeholder="Search" class="form-control">
+                <span id="searchicon" class="fa fa-search form-control-feedback"></span>
+            </div>
+          </form>
+		</div><!-- /.navbar-collapse -->
+      </div>
+    </div>
+
+    <div id="container">
+		<!-- start sidebar //////////////////////////////////////////////////// -->
+		<!-- start sidebar //////////////////////////////////////////////////// -->
+		<!-- start sidebar //////////////////////////////////////////////////// -->
+
+		<div id="sidebar-wrapper">
+			<!-- pi nav list -->
+			<div id="nav-sidebar" class="pre-scrollable">
+			  <div class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm in canvas-slid" id="navmenu">
+				<div class="panel-heading clearfix">
+
+					<a href="#">
+					<!--  <img src="..." alt="...">	-->
+					<span class="fa fa-user img-circle pull-left header-photo cat-colour-user"></span>
+					</a>
+					<button type="button" class="btn btn-xs btn-default pull-right" id="nav-sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button>
+
+				  <h3 class="panel-title menu-username">User name</h3>
+				</div>
+				<div class="panel-body">
+
+
+
+
+				<div id="menu-map-options" class="well">
+					<form class="checkbox" role="track">
+						<label><input id="track" type="checkbox"> Ακολούθησε τη θέση μου</label>
+					</form>
+
+					<div id="distance-wrapper">
+						<div class="col-xs-4">
+							<span style="line-height:1em;padding:5px 0;">Απόσταση:&nbsp;</span>
+						</div>
+						<div class="col-xs-8">
+							<output for=fader id="volume" class="" style="line-height:0.8em;padding:5px 0;"></output>
+						</div>
+					</div>
+
+					<input type=range min=100 max=1000 id="fader" step=100 oninput="outputUpdate(value)">
+
+					<script>
+						function outputUpdate(vol) {
+							document.querySelector('#volume').value = vol + 'm';
+						}
+						window.onload = function() {
+							outputUpdate(500);
+							document.getElementById("fader").value = 500;
+						};
+					</script>
+				</div>
+
+
+
+				  <div class="row">
+					<ul class="nav navmenu-nav">
+						<li class="">
+							<a href="#" id="cafe-toggle-btn-md">
+							<span class="fa fa-coffee nav-icon"></span>
+							Coffee
+							</a>
+						</li>
+						<li class="disabled">
+							<a href="#" id="bus-toggle-btn">
+							<span class="fa fa-bus nav-icon"></span>
+							My bus
+							</a>
+						</li>
+						<li class="">
+							<a href="#" id="tickets-toggle-btn">
+							<span class="fa fa-ticket nav-icon"></span>
+							My tickets
+							</a>
+						</li>
+						<li class="">
+							<a href="#" data-toggle="modal" data-target="#routesModal">
+							<span class="fa fa-road nav-icon"></span>
+							My route
+							</a>
+						</li>
+						<li class="">
+							<a href="#" id="stats-toggle-btn">
+							<span class="fa fa-pie-chart nav-icon"></span>
+							My staticstics
+							</a>
+						</li>
+						<li class="">
+							<a href="#" id="plan-toggle-btn-md">
+								<span class="fa fa-location-arrow nav-icon"></span>
+								Trip planner
+							</a>
+						</li>
+						<li class="">
+							<a href="#" id="poi-toggle-btn">
+								<span class="fa fa-binoculars nav-icon"></span>
+								POIs
+							</a>
+						</li>
+						<li class="disabled">
+							<a href="#" id="offers-toggle-btn">
+							<span class="fa fa-certificate nav-icon"></span>
+							Offers
+							</a>
+						</li>
+						<li class="disabled">
+							<a href="#" id="alerts-toggle-btn">
+							<span class="fa fa-bell nav-icon"></span>
+							Alerts
+							</a>
+						</li>
+						<li class="">
+						  <a href="#" data-toggle="modal" data-target="#incident-reportModal">
+							<span class="fa fa-envelope nav-icon"></span>
+							Feedback
+							</a>
+						</li>
+						<li class="dropdown">
+						  <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+							<span class="fa fa-star nav-icon"></span>
+							This app
+							<b class="caret"></b></a>
+						  <ul class="dropdown-menu">
+							<li class="disabled">
+								<a href="#">
+								<span class="fa fa-sliders nav-icon"></span>
+								Settings
+								</a>
+							</li>
+							<li class="disabled">
+								<a href="#">
+								<span class="fa fa-life-ring nav-icon"></span>
+								Help
+								</a>
+							</li>
+							<li class="">
+								<a href="#" data-toggle="modal" data-target="#aboutModal">
+								<span class="fa fa-question-circle nav-icon"></span>
+								About
+								</a>
+							</li>
+<!--
+							<li class="divider"></li>
+							<li class="dropdown-header">Nav header</li>
+							<li><a href="#">Separated link</a></li>
+							<li><a href="#">One more separated link</a></li>
+-->
+						  </ul>
+						</li>
+					</ul>
+				  </div>
+				</div>
+			  </div>
+			</div>
+			<!-- end pi nav list -->
+
+
+<!-- COFFEE SHOPS ////////////////////////////////////////////////// -->
+			<div id="cafe-sidebar">
+				<div class="cafe-sidebar-wrapper">
+				  <div class="panel panel-default" id="features3">
+					<div class="panel-heading">
+					  <h3 class="panel-title">Επιλογή καφετέριας
+					  <button type="button" class="btn btn-xs btn-default pull-right" id="cafe-sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button>
+					  </h3>
+					</div>
+<!--
+					<div class="panel-body">
+					  <div class="row">
+						<div class="col-xs-8 col-md-8">
+						  <input type="text" class="form-control search" placeholder="Filter" />
+						</div>
+						<div class="col-xs-4 col-md-4">
+						  <button type="button" class="btn btn-primary pull-right sort" data-sort="feature-name" id="sort-btn2"><i class="fa fa-sort"></i>&nbsp;&nbsp;Sort</button>
+						</div>
+					  </div>
+					</div>
+-->
+					<div class="list-group sidebar-cafe-list pre-scrollable">
+					  <button type="button" class="list-group-item">
+						<span class="cafe-rating badge cat-colour-bus">5</span>
+						<strong>Coffee Now</strong>
+						<hr>
+						Τιμή: <span class="coffee-price large-number">1.5&euro;</span>
+					  </button>
+					  <button type="button" class="list-group-item">
+						<span class="cafe-rating badge cat-colour-bus">5</span>
+						<strong>Coffee Now</strong>
+						<hr>
+						Τιμή: <span class="coffee-price large-number">1.5&euro;</span>
+					  </button>
+					  <button type="button" class="list-group-item">
+						<span class="cafe-rating badge cat-colour-bus">5</span>
+						<strong>Coffee Now</strong>
+						<hr>
+						Τιμή: <span class="coffee-price large-number">1.5&euro;</span>
+					  </button>
+					</div>
+				  </div>
+				</div>
+			</div>
+<!-- COFFEE SHOPS ////////////////////////////////////////////////// -->
+
+
+			<div id="sidebar">
+				<div class="sidebar-wrapper">
+				  <div class="panel panel-default" id="features">
+					<div class="panel-heading">
+					  <h3 class="panel-title">Points of Interest
+						<!-- <span class="fa fa-binoculars pull-right btn-xs"></span> -->
+					  <button type="button" class="btn btn-xs btn-default pull-right" id="poi-sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button>
+					  </h3>
+					</div>
+					<div class="panel-body">
+					  <div class="row">
+						<div class="col-xs-8 col-md-8">
+						  <input type="text" class="form-control search" placeholder="Filter" />
+						</div>
+						<div class="col-xs-4 col-md-4">
+						  <button type="button" class="btn btn-primary pull-right sort" data-sort="feature-name" id="sort-btn"><i class="fa fa-sort"></i>&nbsp;&nbsp;Sort</button>
+						</div>
+					  </div>
+					</div>
+					<div class="sidebar-table">
+					  <table class="table table-hover" id="feature-list">
+						<thead class="hidden">
+						  <tr>
+							<th>Icon</th>
+						  </tr>
+						  <tr>
+							<th>Name</th>
+						  </tr>
+						  <tr>
+							<th>Chevron</th>
+						  </tr>
+						</thead>
+						<tbody class="list"></tbody>
+					  </table>
+					</div>
+				  </div>
+				</div>
+			</div>
+
+			<!-- dimos user list -->
+			<div id="user-sidebar">
+				<div class="user-sidebar-wrapper">
+				  <div class="panel panel-default" id="features2">
+					<div class="panel-heading">
+					  <h3 class="panel-title">Trip planner
+					  <button type="button" class="btn btn-xs btn-default pull-right" id="plan-sidebar-hide-btn"><i class="fa fa-chevron-left"></i></button></h3>
+					</div>
+					<div class="panel-body">
+						<p>Επιλέξτε αριθμό ημερών και αφετηρία για να βγάλετε το πρόγραμμά σας.</p>
+					</div>
+
+					<div class="sidebar-table user">
+					  <table class="table table-hover" id="user-feature-list">
+						<thead class="hidden">
+						  <tr>
+							<th>Icon</th>
+						  </tr>
+						  <tr>
+							<th>Name</th>
+						  </tr>
+						  <tr>
+							<th>Chevron</th>
+						  </tr>
+						</thead>
+						<tbody class="list">
+							<div class="form-group">
+								<label >Αριθμός ημερών</label>
+								<select name='days' id='days'>
+									<option value="1">1</option>
+									<option value="2">2</option>
+									<option value="3">3</option>
+									<option value="4">4</option>
+									<option value="5">5</option>
+									<option value="6">6</option>
+									<option value="7">7</option>
+									<option value="8">8</option>
+									<option value="9">9</option>
+									<option value="10">10</option>
+									<option value="11">11</option>
+									<option value="12">12</option>
+									<option value="13">13</option>
+									<option value="14">14</option>
+									<option value="15">15</option>
+									<option value="16">16</option>
+									<option value="17">17</option>
+									<option value="18">18</option>
+									<option value="19">19</option>
+									<option value="20">20</option>
+									<option value="21">22</option>
+									<option value="22">22</option>
+									<option value="23">23</option>
+									<option value="24">24</option>
+									<option value="25">26</option>
+									<option value="27">27</option>
+									<option value="28">28</option>
+									<option value="29">29</option>
+									<option value="30">30</option>
+									<option value="31">32</option>
+									<option value="32">32</option>
+									<option value="33">33</option>
+								</select>
+							</div>
+						</tbody>
+					  </table>
+					  <hr><button type="submit" class="btn btn-default send-pois" >Πρόγραμμα</button>
+					  <hr><button type="submit" class="btn btn-success share-pois" >Μοιράσου τη διαδρομή</button>
+
+					</div>
+				  </div>
+				</div>
+			</div>
+			<!-- end dimos user list -->
+
+		</div>
+		<!-- end sidebar ////////////////////////////////////////////// -->
+		<!-- end sidebar ////////////////////////////////////////////// -->
+		<!-- end sidebar ////////////////////////////////////////////// -->
+
+
+		<div id="content-wrapper">
+			<!-- MAP ////////////////////////////////////////////// -->
+			<div id="map" class="collapse in"></div>
+			<!-- STATS ////////////////////////////////////////////// -->
+			<div id="content-stats" class="collapse in">
+				<div class="content-inner">
+					<div class="page-header colour-header">
+						<span class="fa fa-pie-chart img-circle header-photo cat-colour-stats"></span>
+						<h1 class="page-header clearfix">Στατιστικά</h1>
+					</div>
+					<div class="jagged-down colour-main-window clearfix"></div>
+					<div class="main-container colour-main-window">
+						<br />
+						<h4 class="text-center">Κατανομή εισιτηρίων ανά μήνα</h4>
+
+						<div id="canvas-holder">
+						<canvas id="chart-area" width="300" height="300" ></canvas>
+						</div>
+					</div>
+
+					<div class="jagged-up colour-main-window clearfix"></div>
+					<div class="main-bottom colour-header">
+						<div class="clearfix"></div>
+					</div>
+				</div>
+			</div>
+
+			<!-- TICKETS ////////////////////////////////////////////// -->
+			<div id="content-tickets" class="collapse in">
+				<div class="content-inner">
+				<div class="page-header colour-header">
+					<span class="fa fa-ticket img-circle header-photo cat-colour-ticket"></span>
+					<h1 class="page-header clearfix">My tickets</h1>
+				</div>
+				<div class="jagged-down colour-main-window clearfix"></div>
+				<div class="main-container colour-main-window">
+					<p class="lead">Αγαπητοί Επιβάτες,</p>
+					<p>Όταν χρησιμοποιείτε τα Μέσα Μαζικής Μεταφοράς της Αθήνας είναι απαραίτητο να έχετε έγκυρο εισιτήριο ή κάρτα απεριορίστων διαδρομών.</p>
+					<p>Τονίζεται ότι το εισιτήριο εφόσον έχει επικυρωθεί είναι αυστηρά προσωπικό. Η μεταβίβαση επί πληρωμή ή δωρεάν ενός επικυρωμένου ενιαίου εισιτηρίου από τον έναν επιβάτη στον άλλον, ή η χρήση ενός ήδη επικυρωμένου εισιτηρίου από άλλον επιβάτη είναι παράνομη και αντίκειται στους Γενικούς Όρους Μεταφοράς, καθότι το μεταβιβαζόμενο εισιτήριο δεν αποτελεί πλέον έγκυρο τίτλο μεταφοράς.</p>
+					<div class="table-responsive">
+					<table class="table table-hover table-condensed" id="ticket-list">
+					  <tr>
+						<th>Κανονικό</th>
+						<th><input id="ticket1-amount" readonly value="0" class="col-xs-12 large-number btn"></th>
+						<th><button class="buyticket1 btn btn-success fa fa-plus" data-toggle="modal" data-target="#buy-ticket"></button></th>
+						<th><button class="btn btn-info fa fa-info" data-toggle="modal" data-target="#ticket-1"></button></th>
+						<th><button id="useticket1" class="btn btn-primary" ><i class="fa fa-ticket"></i>&nbsp;Χρήση</button></th>
+					  </tr>
+					  <tr>
+						<th>Μειωμένο</th>
+						<th><input id="ticket2-amount" readonly value="0" class="col-xs-12 large-number btn"></th>
+						<th><button class="buyticket2 btn btn-success fa fa-plus" data-toggle="modal" data-target="#buy-ticket"></button></th>
+						<th><button class="btn btn-info fa fa-info" data-toggle="modal" data-target="#ticket-2"></button></th>
+						<th><button id="useticket2" class="btn btn-primary" ><i class="fa fa-ticket"></i>&nbsp;Χρήση</button></th>
+					  </tr>
+					  <tr>
+						<th>Ημερήσιο</th>
+						<th><input id="ticket3-amount" readonly value="0" class="col-xs-12 large-number btn"></th>
+						<th><button class="buyticket3 btn btn-success fa fa-plus" data-toggle="modal" data-target="#buy-ticket"></button></th>
+						<th><button class="btn btn-info fa fa-info" data-toggle="modal" data-target="#ticket-3"></button></th>
+						<th><button id="useticket3" class="btn btn-primary" ><i class="fa fa-ticket"></i>&nbsp;Χρήση</button></th>
+					  </tr>
+					  <tr>
+						<th>5 ημερών</th>
+						<th><input id="ticket4-amount" readonly value="0" class="col-xs-12 large-number btn"></th>
+						<th><button class="buyticket4 btn btn-success fa fa-plus" data-toggle="modal" data-target="#buy-ticket"></button></th>
+						<th><button class="btn btn-info fa fa-info" data-toggle="modal" data-target="#ticket-4"></button></th>
+						<th><button id="useticket4" class="btn btn-primary" ><i class="fa fa-ticket"></i>&nbsp;Χρήση</button></th>
+					  </tr>
+					  <tr>
+						<th>3ημερο τουριστικό</th>
+						<th><input id="ticket5-amount" readonly value="0" class="col-xs-12 large-number btn"></th>
+						<th><button class="buyticket5 btn btn-success fa fa-plus" data-toggle="modal" data-target="#buy-ticket"></button></th>
+						<th><button class="btn btn-info fa fa-info" data-toggle="modal" data-target="#ticket-5"></button></th>
+						<th><button id="useticket5" class="btn btn-primary" ><i class="fa fa-ticket"></i>&nbsp;Χρήση</button></th>
+					  </tr>
+					  <tr>
+						<th>EXPRESS αεροδρομίου - Κανονικό</th>
+						<th><input id="ticket6-amount" readonly value="0" class="col-xs-12 large-number btn"></th>
+						<th><button class="buyticket6 btn btn-success fa fa-plus" data-toggle="modal" data-target="#buy-ticket"></button></th>
+						<th><button class="btn btn-info fa fa-info" data-toggle="modal" data-target="#ticket-6"></button></th>
+						<th><button id="useticket6" class="btn btn-primary" ><i class="fa fa-ticket"></i>&nbsp;Χρήση</button></th>
+					  </tr>
+					  <tr>
+						<th>EXPRESS αεροδρομίου - Μειωμένο</th>
+						<th><input id="ticket7-amount" readonly value="0" class="col-xs-12 large-number btn"></th>
+						<th><button class="buyticket7 btn btn-success fa fa-plus" data-toggle="modal" data-target="#buy-ticket"></button></th>
+						<th><button class="btn btn-info fa fa-info" data-toggle="modal" data-target="#ticket-7"></button></th>
+						<th><button id="useticket7" class="btn btn-primary" ><i class="fa fa-ticket"></i>&nbsp;Χρήση</button></th>
+					  </tr>
+					<tbody class="list"></tbody>
+					</table>
+					</div>
+
+				</div>
+				<div class="jagged-up colour-main-window clearfix"></div>
+				<div class="main-bottom colour-header">
+					<div class="clearfix"></div>
+				</div>
+				</div>
+			</div>
+
+
+		</div><!-- CONTENT-WRAPPER END -->
+
+
+    </div><!-- CONTAINER END -->
+
+
+
+
+<!--
+    <div id="loading">
+      <div class="loading-indicator">
+        <div class="progress progress-striped active">
+          <div class="progress-bar progress-bar-info progress-bar-full"></div>
+        </div>
+      </div>
+    </div>
+-->
+
+
+
+	<!-- modals ////////////////////////////////////////////// -->
+	<!-- modals ////////////////////////////////////////////// -->
+
+<!-- buy-ticket ////////////////////////////////////////////// -->
+    <div class="modal fade" id="buy-ticket" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title"><span>ΒΗΜΑ 1:</span> Επιλέξτε ποσότητα</h2>
+          </div>
+          <div class="modal-body">
+				<p>Όταν χρησιμοποιείτε τα Μέσα Μαζικής Μεταφοράς της Αθήνας είναι απαραίτητο να έχετε έγκυρο εισιτήριο ή κάρτα απεριορίστων διαδρομών.</p>
+				<hr>
+				<div class="row">
+					<div class="col-xs-8">
+					<h2><span class="">Εισιτήριο 70 λεπτών για όλα τα Μέσα - Κανονικό</span></h2>
+					</div>
+					<div class="col-xs-4">
+						<div class="pull-right btn-group-vertical btn-lg" role="group" aria-label="...">
+							<button type="button" data-type="plus" data-field="quant" class="btn-number btn btn-lg btn-default fa fa-angle-up" ></button>
+							<button type="button" data-type="minus" data-field="quant" disabled="disabled" class="btn-number btn btn-lg btn-default fa fa-angle-down" ></button>
+						</div>
+						<input type="text" oninput="updatePriceTotal();" id="quant" name="quant" min="1" max="10" step="1" value="1" class="input-number pull-right large-number buy-large-number img-circle cat-colour-bus">
+					</div>
+				</div>
+
+				<div class="row">
+					<div class="col-xs-12">
+						<hr>
+						<input type="number" name="ticketprice" id="ticketprice" value="140" class="hidden">
+						<input type="hidden" name="ticketstatus" id="ticketstatus" value='olokliro'>
+						<div class="text-right">
+							<strong>Σύνολο</strong>
+							<i class="fa fa-euro total-euro pull-right"></i>
+							<output for="how-many" id="totalamount" name="totalamount" class="pull-right large-number large-number-total" >1.40</output>
+						</div>
+					</div>
+				</div>
+          </div>
+          <div class="modal-footer">
+				<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+			<button data-toggle="modal" type="button" data-target="#paymentModal" id="goto-pay-btn" class="btn btn-success pull-right" onclick="buyTickets()" ><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <div class="modal fade" id="paymentModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title"><span>ΒΗΜΑ 2:</span> Πληρωμή</h2>
+          </div>
+          <div class="modal-body">
+
+
+			<!-- If you're using Stripe for payments -->
+			<script type="text/javascript" src="https://js.stripe.com/v2/"></script>
+
+			<div class="container">
+				<div class="row">
+					<!-- You can make it whatever width you want. I'm making it full width
+						 on <= small devices and 4/12 page width on >= medium devices -->
+					<div class="col-xs-12 col-md-12">
+						<!-- CREDIT CARD FORM STARTS HERE -->
+						<div class="panel panel-default credit-card-box">
+							<div class="panel-heading display-table" >
+								<div class="row display-tr" >
+									<h3 class="panel-title display-td" >Payment Details</h3>
+									<div class="display-td" >
+										<img class="img-responsive pull-right" src="http://i76.imgup.net/accepted_c22e0.png" alt="">
+									</div>
+								</div>
+							</div>
+							<div class="panel-body">
+								<form id="payment-form">
+									<div class="row">
+										<div class="col-xs-12">
+											<div class="form-group">
+												<label for="cardNumber">CARD NUMBER</label>
+												<div class="input-group">
+													<input
+														type="tel"
+														class="form-control"
+														name="cardNumber"
+														placeholder="Valid Card Number"
+														autocomplete="cc-number"
+														required autofocus
+													/>
+													<span class="input-group-addon"><i class="fa fa-credit-card"></i></span>
+												</div>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-7 col-md-7">
+											<div class="form-group">
+												<label for="cardExpiry"><span class="hidden-xs">EXPIRATION</span><span class="visible-xs-inline">EXP</span> DATE</label>
+												<input
+													type="tel"
+													class="form-control"
+													name="cardExpiry"
+													placeholder="MM / YY"
+													autocomplete="cc-exp"
+													required
+												/>
+											</div>
+										</div>
+										<div class="col-xs-5 col-md-5 pull-right">
+											<div class="form-group">
+												<label for="cardCVC">CV CODE</label>
+												<input
+													type="tel"
+													class="form-control"
+													name="cardCVC"
+													placeholder="CVC"
+													autocomplete="cc-csc"
+													required
+												/>
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-12">
+											<div class="form-group">
+												<label for="couponCode">COUPON CODE</label>
+												<input type="text" class="form-control" name="couponCode" />
+											</div>
+										</div>
+									</div>
+									<div class="row">
+										<div class="col-xs-12">
+											<button class="btn btn-success btn-lg btn-block" id="complete-payment-btn" type="submit">Ολοκλήρωση</button>
+										</div>
+									</div>
+									<div class="row" style="display:none;">
+										<div class="col-xs-12">
+											<p class="payment-errors"></p>
+										</div>
+									</div>
+								</form>
+							</div>
+						</div>
+						<!-- CREDIT CARD FORM ENDS HERE -->
+
+					</div>
+				</div>
+			</div>
+
+          </div>
+          <div class="modal-footer">
+				<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+<!-- ticket 1 ////////////////////////////////////////////// -->
+    <div class="modal fade" id="ticket-1" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">Εισιτήριο 70 λεπτών για όλα τα Μέσα</h2>
+          </div>
+          <div class="modal-body">
+			<h4>Κανονικό <span class="ticket-price">1,20</span> ευρώ</h4>
+			<p>Το Ενιαίο Εισιτήριο 70 λεπτών ισχύει σε όλα τα μέσα αρμοδιότητας ΟΑΣΑ: Λεωφορεία, Τρόλλεϋ, Τραμ, Ηλεκτρικό Σιδηρόδρομο, Μετρό (μέχρι Κορωπί) και στην ΤΡΑΙΝΟΣΕ (στο τμήμα του Προαστιακού Μαγούλα-Πειραιάς-Κορωπί). Δεν ισχύει στις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου, στη γραμμή Χ80 και στο Μετρό στο τμήμα Κορωπί-Αεροδρόμιο.</p>
+			<p>Ο χρόνος ισχύος του ενιαίου εισιτηρίου είναι 70 λεπτά από την επικύρωσή του κατά την πρώτη επιβίβαση και δεν επιτρέπεται δεύτερη επικύρωση. Μετά τη λήξη του χρόνου ισχύος του, απαιτείται επικύρωση νέου εισιτηρίου.</p>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+            <button class="buyticket1 btn btn-success pull-right"><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+<!--
+            <button type="button" onclick="javascript:location.href='buy-ticket.html'" class="btn btn-success pull-right" ><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+-->
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+<!-- ticket 2 ////////////////////////////////////////////// -->
+    <div class="modal fade" id="ticket-2" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">Εισιτήριο 70 λεπτών για όλα τα Μέσα</h2>
+          </div>
+          <div class="modal-body">
+			<h4>Μειωμένο <span class="ticket-price">0,60</span> ευρώ</h4>
+			<p>Το Ενιαίο Εισιτήριο 70 λεπτών ισχύει σε όλα τα μέσα αρμοδιότητας ΟΑΣΑ: Λεωφορεία, Τρόλλεϋ, Τραμ, Ηλεκτρικό Σιδηρόδρομο, Μετρό (μέχρι Κορωπί) και στην ΤΡΑΙΝΟΣΕ (στο τμήμα του Προαστιακού Μαγούλα-Πειραιάς-Κορωπί). Δεν ισχύει στις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου, στη γραμμή Χ80 και στο Μετρό στο τμήμα Κορωπί-Αεροδρόμιο.</p>
+			<p>Ο χρόνος ισχύος του ενιαίου εισιτηρίου είναι 70 λεπτά από την επικύρωσή του κατά την πρώτη επιβίβαση και δεν επιτρέπεται δεύτερη επικύρωση. Μετά τη λήξη του χρόνου ισχύος του, απαιτείται επικύρωση νέου εισιτηρίου.</p>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+            <button class="buyticket2 btn btn-success pull-right"><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+<!-- ticket 3 ////////////////////////////////////////////// -->
+    <div class="modal fade" id="ticket-3" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">Ημερήσιο Εισιτήριο για όλα τα Μέσα</h2>
+          </div>
+          <div class="modal-body">
+			<h4><span class="ticket-price">4,00</span> ευρώ</h4>
+			<p>Το Ημερήσιο εισιτήριο ισχύει σε όλα τα μέσα αρμοδιότητας ΟΑΣΑ: Λεωφορεία, Τρόλλεϋ, Τραμ, Ηλεκτρικό Σιδηρόδρομο, Μετρό (μέχρι Κορωπί) και στην ΤΡΑΙΝΟΣΕ (στο τμήμα του Προαστιακού Μαγούλα-Πειραιάς-Κορωπί).Το εισιτήριο αυτό ισχύει στη γραμμή Χ80, ενώ δεν ισχύει στις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου, και στο Μετρό στο τμήμα Κορωπί-Αεροδρόμιο.</p>
+			<p>Το Ημερήσιο Εισιτήριο επικυρώνεται υποχρεωτικά κατά την πρώτη επιβίβαση και ισχύει για 24 ώρες από την επικύρωσή του, για απεριόριστο αριθμό διαδρομών.</p>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+            <button class="buyticket3 btn btn-success pull-right"><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+<!-- ticket 4 ////////////////////////////////////////////// -->
+    <div class="modal fade" id="ticket-4" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">Εισιτήριο πέντε ημερών για όλα τα Μέσα </h2>
+          </div>
+          <div class="modal-body">
+			<h4><span class="ticket-price">10,00</span> ευρώ</h4>
+			<p>Το εισιτήριο 5 ημερών ισχύει σε όλα τα μέσα αρμοδιότητας ΟΑΣΑ Λεωφορεία, Τρόλλεϋ, Τραμ, Ηλεκτρικό Σιδηρόδρομο, Μετρό (μέχρι Κορωπί) και στην ΤΡΑΙΝΟΣΕ (στο τμήμα του Προαστιακού Μαγούλα-Πειραιάς-Κορωπί). Δεν ισχύει στις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου, στη γραμμή Χ80 και στο Μετρό στο τμήμα Κορωπί-Αεροδρόμιο.</p>
+			<p>Το εισιτήριο 5 ημερών επικυρώνεται υποχρεωτικά κατά την πρώτη επιβίβαση και ισχύει για απεριόριστο αριθμό διαδρομών για πέντε 24ωρα από την επικύρωσή του.  </p>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+            <button class="buyticket4 btn btn-success pull-right"><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+<!-- ticket 5 ////////////////////////////////////////////// -->
+    <div class="modal fade" id="ticket-5" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">3ημερο Τουριστικό εισιτήριο </h2>
+          </div>
+          <div class="modal-body">
+			<h4><span class="ticket-price">20,00</span> ευρώ</h4>
+			<p>Το 3ημερο Τουριστικό εισιτήριο ισχύει για 3 πλήρη 24ωρα από την πρώτη και μοναδική επικύρωσή του σε όλα τα μέσα αρμοδιότητας ΟΑΣΑ: Λεωφορεία, Τρόλλεϋ, Τραμ, Ηλεκτρικό Σιδηρόδρομο, Μετρό (μέχρι Κορωπί) και στην ΤΡΑΙΝΟΣΕ (στο τμήμα του Προαστιακού Μαγούλα-Πειραιάς-Κορωπί). Επίσης περιλαμβάνει από μια διαδρομή από και προς τον Διεθνή Αερολιμένα Αθηνών με το Μετρό ή τις αντίστοιχες λεωφορειακές γραμμές express της Ο.ΣΥ. Το εισιτήριο αυτό ισχύει στη γραμμή Χ80.</p>
+
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+            <button class="buyticket5 btn btn-success pull-right"><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+<!-- ticket 6 ////////////////////////////////////////////// -->
+    <div class="modal fade" id="ticket-6" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">Εισιτήριο λεωφορειακών γραμμών EXPRESS Αεροδρομίου</h2>
+          </div>
+          <div class="modal-body">
+			<h4>Κανονικό <span class="ticket-price">5,00</span> ευρώ</h4>
+			<p>Τα εισιτήρια για τις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου ισχύουν για μία μόνο διαδρομή, από ή προς το Αεροδρόμιο.
+Η αποβίβαση από τις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου με κατεύθυνση το Αεροδρόμιο επιτρέπεται μόνο στο Αεροδρόμιο, και αντίστροφα, η επιβίβαση στις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου με αφετηρία το Αεροδρόμιο επιτρέπεται μόνο από το Αεροδρόμιο.
+Τα σημεία πώλησης των εισιτηρίων είναι:</p>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+            <button class="buyticket6 btn btn-success pull-right"><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+<!-- ticket 7 ////////////////////////////////////////////// -->
+    <div class="modal fade" id="ticket-7" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h2 class="modal-title">Εισιτήριο λεωφορειακών γραμμών EXPRESS Αεροδρομίου</h2>
+          </div>
+          <div class="modal-body">
+			<h4>Μειωμένο <span class="ticket-price">2,50</span> ευρώ</h4>
+			<p>Τα εισιτήρια για τις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου ισχύουν για μία μόνο διαδρομή, από ή προς το Αεροδρόμιο.
+Η αποβίβαση από τις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου με κατεύθυνση το Αεροδρόμιο επιτρέπεται μόνο στο Αεροδρόμιο, και αντίστροφα, η επιβίβαση στις λεωφορειακές γραμμές EXPRESS του Αεροδρομίου με αφετηρία το Αεροδρόμιο επιτρέπεται μόνο από το Αεροδρόμιο.
+Τα σημεία πώλησης των εισιτηρίων είναι:</p>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+            <button class="buyticket7 btn btn-success pull-right"><i class="fa fa-euro"></i>&nbsp;&nbsp;Αγορά</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+
+    <div class="modal fade" id="aboutModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Welcome to #Athens!</h4>
+          </div>
+          <div class="modal-body">
+            <ul class="nav nav-tabs" id="aboutTabs">
+              <li class="active"><a href="#about" data-toggle="tab"><i class="fa fa-question-circle"></i>&nbsp;About</a></li>
+              <li><a href="#contact" data-toggle="tab"><i class="fa fa-envelope"></i>&nbsp;Contact us</a></li>
+              <li><a href="#disclaimer" data-toggle="tab"><i class="fa fa-exclamation-circle"></i>&nbsp;Disclaimer</a></li>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-globe"></i>&nbsp;Metadata <b class="caret"></b></a>
+                <ul class="dropdown-menu">
+                  <li><a href="#boroughs-tab" data-toggle="tab">Boroughs</a></li>
+                  <li><a href="#subway-lines-tab" data-toggle="tab">Subway Lines</a></li>
+                  <li><a href="#theaters-tab" data-toggle="tab">Theaters</a></li>
+                  <li><a href="#museums-tab" data-toggle="tab">Museums</a></li>
+                </ul>
+              </li>
+            </ul>
+            <div class="tab-content" id="aboutTabsContent">
+              <div class="tab-pane fade active in" id="about">
+                <p>A simple, responsive template for building web mapping applications with <a href="http://getbootstrap.com/">Bootstrap 3</a>, <a href="http://leafletjs.com/" target="_blank">Leaflet</a>, and <a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a>. Open source, MIT licensed, and available on <a href="https://github.com/bmcbride/bootleaf" target="_blank">GitHub</a>.</p>
+                <div class="panel panel-primary">
+                  <div class="panel-heading">Features</div>
+                  <ul class="list-group">
+                    <li class="list-group-item">Fullscreen mobile-friendly map template with responsive navbar and modal placeholders</li>
+                    <li class="list-group-item">jQuery loading of external GeoJSON files</li>
+                    <li class="list-group-item">Logical multiple layer marker clustering via the <a href="https://github.com/Leaflet/Leaflet.markercluster" target="_blank">leaflet marker cluster plugin</a></li>
+                    <li class="list-group-item">Elegant client-side multi-layer feature search with autocomplete using <a href="http://twitter.github.io/typeahead.js/" target="_blank">typeahead.js</a></li>
+                    <li class="list-group-item">Responsive sidebar feature list synced with map bounds, which includes sorting and filtering via <a href="http://listjs.com/" target="_blank">list.js</a></li>
+                    <li class="list-group-item">Marker icons included in grouped layer control via the <a href="https://github.com/ismyrnow/Leaflet.groupedlayercontrol" target="_blank">grouped layer control plugin</a></li>
+                  </ul>
+                </div>
+              </div>
+              <div id="disclaimer" class="tab-pane fade text-danger">
+                <p>The data provided on this site is for informational and planning purposes only.</p>
+                <p>Absolutely no accuracy or completeness guarantee is implied or intended. All information on this map is subject to such variations and corrections as might result from a complete title search and/or accurate field survey.</p>
+              </div>
+              <div class="tab-pane fade" id="contact">
+                <form id="contact-form">
+                  <div class="well well-sm">
+                    <div class="row">
+                      <div class="col-md-4">
+                        <div class="form-group">
+                          <label for="first-name">First Name:</label>
+                          <input type="text" class="form-control" id="first-name">
+                        </div>
+                        <div class="form-group">
+                          <label for="last-name">Last Name:</label>
+                          <input type="text" class="form-control" id="last-email">
+                        </div>
+                        <div class="form-group">
+                          <label for="email">Email:</label>
+                          <input type="text" class="form-control" id="email">
+                        </div>
+                      </div>
+                      <div class="col-md-8">
+                        <label for="message">Message:</label>
+                        <textarea class="form-control" rows="8" id="message"></textarea>
+                      </div>
+                      <div class="col-md-12">
+                        <p>
+                          <button type="submit" class="btn btn-primary pull-right" data-dismiss="modal">Submit</button>
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="tab-pane fade" id="boroughs-tab">
+                <p>Borough data courtesy of <a href="http://www.nyc.gov/html/dcp/pdf/bytes/nybbwi_metadata.pdf" target="_blank">New York City Department of City Planning</a></p>
+              </div>
+              <div class="tab-pane fade" id="subway-lines-tab">
+                <p><a href="http://spatialityblog.com/2010/07/08/mta-gis-data-update/#datalinks" target="_blank">MTA Subway data</a> courtesy of the <a href="http://www.urbanresearch.org/about/cur-components/cuny-mapping-service" target="_blank">CUNY Mapping Service at the Center for Urban Research</a></p>
+              </div>
+              <div class="tab-pane fade" id="theaters-tab">
+                <p>Theater data courtesy of <a href="https://data.cityofnewyork.us/Recreation/Theaters/kdu2-865w" target="_blank">NYC Department of Information & Telecommunications (DoITT)</a></p>
+              </div>
+              <div class="tab-pane fade" id="museums-tab">
+                <p>Museum data courtesy of <a href="https://data.cityofnewyork.us/Recreation/Museums-and-Galleries/sat5-adpb" target="_blank">NYC Department of Information & Telecommunications (DoITT)</a></p>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="legendModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Map Legend</h4>
+          </div>
+          <div class="modal-body">
+            <p>Map Legend goes here...</p>
+          </div>
+          <div class="modal-footer">
+			<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+	<!-- dimos incidents report -->
+    <div class="modal fade" style="padding:0;" id="incident-reportModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Αναφορά προβλημάτων</h4>
+          </div>
+
+			<div class="modal-body">
+
+				<div class="form-group">
+
+					<ul class="nav nav-tabs" id="reportTabs">
+					  <li class="active"><a href="#stasi" data-toggle="tab"><i class="fa fa-neuter"></i>&nbsp;Η στάση</a></li>
+					  <li><a href="#leoforio" data-toggle="tab"><i class="fa fa-bus"></i>&nbsp;Το λεωφορείο</a></li>
+					  <li><a href="#dromos" data-toggle="tab"><i class="fa fa-road"></i>&nbsp;Στο δρόμο</a></li>
+					</ul>
+
+					<div class="tab-content" id="anaforaTabsContent">
+					  <div class="tab-pane fade active in" id="stasi">
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name='xarti' id='xarti' value="ΝΑΙ">Δεν έχει χάρτη
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name='fotismo' id='fotismo' value="ΝΑΙ">Δεν έχει φωτισμό
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="stasi_onoma" id="stasi_onoma" value="ΝΑΙ">Δεν έχει όνομα
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="dromologia" id="dromologia" value="ΝΑΙ">Δεν έχει πληροφορίες για δρομολόγια
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="prosvasi" id="prosvasi"  value="ΝΑΙ">Δεν έχει πρόσβαση χαμηλού δαπέδου
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="stegastro" id="stegastro" value="ΝΑΙ">Δεν έχει στέγαστρο
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="braille" id="braille" value="ΝΑΙ">Δεν έχει σήμανση σε Braille
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" id="stasi_fthores" name="stasi_fthores" value="ΝΑΙ"> Έχει φθορές
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="stasi_gemati" id="stasi_gemati" value="ΝΑΙ"> Είναι γεμάτη
+									</label>
+								</div>
+					  </div>
+
+					  <div class="tab-pane fade active in" id="leoforio">
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="leoforeio_gemato" id="leoforeio_gemato" value="ΝΑΙ">Είναι υπερ-γεμάτο
+									</label>
+								</div>
+
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="klimatismo"  id="klimatismo" value="ΝΑΙ">Δεν έχει κλιματισμό
+									</label>
+								</div>
+					  </div>
+
+					  <div class="tab-pane fade active in" id="dromos">
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="atixima" id="atixima" value="ΝΑΙ">Έχει ατύχημα
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="mpotiliarisma" id="mpotiliarisma" value="ΝΑΙ">Έχει μποτιλιάρισμα
+									</label>
+								</div>
+								<div class="checkbox">
+									<label>
+									<input type="checkbox" name="peristatiko" id="peristatiko" value="ΝΑΙ">Έχει απρόβλεπτο περιστατικό
+									</label>
+								</div>
+						</div>
+					  </div>
+
+<!--
+						<h4>Η στάση:</h4>
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name='xarti' id='xarti' value="ΝΑΙ">Δεν έχει χάρτη
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name='fotismo' id='fotismo' value="ΝΑΙ">Δεν έχει φωτισμό
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="stasi_onoma" id="stasi_onoma" value="ΝΑΙ">Δεν έχει όνομα
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="dromologia" id="dromologia" value="ΝΑΙ">Δεν έχει πληροφορίες για δρομολόγια
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="prosvasi" id="prosvasi"  value="ΝΑΙ">Δεν έχει πρόσβαση χαμηλού δαπέδου
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="stegastro" id="stegastro" value="ΝΑΙ">Δεν έχει στέγαστρο
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="braille" id="braille" value="ΝΑΙ">Δεν έχει σήμανση σε Braille
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" id="stasi_fthores" name="stasi_fthores" value="ΝΑΙ"> Έχει φθορές
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="stasi_gemati" id="stasi_gemati" value="ΝΑΙ"> Είναι γεμάτη
+							</label>
+						</div>
+
+						<h4>Το λεωφορείο:</h4>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="leoforeio_gemato" id="leoforeio_gemato" value="ΝΑΙ">Είναι υπερ-γεμάτο
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="klimatismo"  id="klimatismo" value="ΝΑΙ">Δεν έχει κλιματισμό
+							</label>
+						</div>
+
+						<h4>Στο δρόμο:</h4>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="atixima" id="atixima" value="ΝΑΙ">Έχει ατύχημα
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="mpotiliarisma" id="mpotiliarisma" value="ΝΑΙ">Έχει μποτιλιάρισμα
+							</label>
+						</div>
+
+						<div class="checkbox">
+							<label>
+							<input type="checkbox" name="peristatiko" id="peristatiko" value="ΝΑΙ">Έχει απρόβλεπτο περιστατικό
+							</label>
+						</div>
+-->
+
+						<hr />
+						<a class="btn btn-primary" href="#" style=""  onclick="return capturePhoto();" > ΦΩΤΟΓΡΑΦΙΑ </a>
+
+						<div id="showpic" >
+						<br />
+
+						<img style="display:none; width:80px;height:80px;" id="smallImage" src="" alt="" />
+
+						</div>
+
+						<div class="image-hidden">
+
+							<input type="hidden" name="imagehidden" id="imagehidden" value="">
+
+						</div>
+
+						<textarea class="form-control" rows="3" name="sxolio" id="sxolio">Σχόλιο</textarea>
+
+						<hr>
+
+						<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+						<button type="submit" class="btn btn-default pull-right btn-success" data-dismiss="modal" onclick="sendanafora()">Αποστολή</button>
+				</div>
+	          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- end dimos incidents report -->
+
+
+	<!-- DIMOS ROUTES -->
+	<div class="modal fade" id="routesModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Διαδρομή</h4>
+			</div>
+
+			<div class="order-modal-body">
+
+				<div class="form-group">
+					<label for="kafes">Καφές</label>
+						<select class="form-control" id="kafes">
+							<option value="Espresso">Espresso</option>
+							<option value="Espresso freddo">Espresso freddo</option>
+							<option value="Cappuccino"> Cappuccino</option>
+							<option value="Cappuccino freddo">Cappuccino freddo</option>
+							<option value="Frappe">Frappe</option>
+							<option value="Ελληνικός">Ελληνικός</option>
+							<option value="Γαλλικός">Γαλλικός</option>
+							<option value="Τσάι">Τσάι</option>
+							<option value="Ice tea">Ice tea</option>
+						</select>
+				</div>
+
+				<div class="form-group">
+					<label for="posotita">Ποσότητα</label>
+						<select class="form-control" id="posotita">
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3"> 3</option>
+							<option value="4">4</option>
+						</select>
+				</div>
+
+
+				<div class="form-group">
+					<label for="zachari">Ζάχαρη</label>
+						<select class="form-control" id="zachari">
+							<option value="Γλυκός">Γλυκός</option>
+							<option value="Μέτριος">Μέτριος</option>
+							<option value="Σκέτος"> Σκέτος</option>
+							<option value="Με ολίγη">Με ολίγη</option>
+						</select>
+				</div>
+
+				<div class="form-group">
+					<label for="gala">Γάλα</label>
+						<select class="form-control" id="gala">
+							<option value="Ναι">Ναι</option>
+							<option value="Όχι">Όχι</option>
+						</select>
+				</div>
+
+				<button  class="btn btn-warning" onclick='paraggeliaajax()' > <span class='glyphicon glyphicon-tint'aria-hidden='true'></span>Παραγγελία</button>
+
+			</div>
+
+
+
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- END DIMOS ROUTES -->
+
+		<!-- DIMOS DETAILED INSTRUCTIONS -->
+	<div class="modal fade" id="instructionsModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h3 class="modal-title">Οδηγίες</h3>
+			</div>
+
+<!-- impossible - needs fixing +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- impossible - needs fixing +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+<!-- impossible - needs fixing +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++ -->
+			<ul class="list-group">
+				<div id="instructions">
+
+
+				</div>
+			</ul>
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!-- END DIMOS ROUTES -->
+
+<!----DIMOS ORDER--->
+	<div class="modal fade" id="orderModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Παραγγελία</h4>
+			</div>
+
+			<ul class="list-group">
+			<div class="order-modal-body">
+				<div id="map-canvas"></div>
+				<div id="directions-panel" class="panel"></div>
+			</div>
+			</ul>
+
+
+
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+	<!----END DIMOS ROUTES--->
+
+
+    <div class="modal fade" id="loginModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Login</h4>
+          </div>
+          <div class="modal-body">
+            <form id="contact-form">
+              <fieldset>
+                <div class="form-group">
+                  <label for="name">Username:</label>
+                  <input type="text" class="form-control" id="username">
+                </div>
+                <div class="form-group">
+                  <label for="email">Password:</label>
+                  <input type="password" class="form-control" id="password">
+                </div>
+              </fieldset>
+            </form>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="submit" class="btn btn-primary" data-dismiss="modal">Login</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="featureModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title text-primary" id="feature-title"></h4>
+          </div>
+          <div class="modal-body" id="feature-info"></div>
+          <div class="modal-footer">
+				<button type="button" class="btn pull-left btn-danger" data-dismiss="modal">Close</button>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <div class="modal fade" id="attributionModal" tabindex="-1" role="dialog">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" type="button" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">
+              Developed by <a href='http://bryanmcbride.com'>bryanmcbride.com</a>
+            </h4>
+          </div>
+          <div class="modal-body">
+            <div id="attribution"></div>
+          </div>
+        </div><!-- /.modal-content -->
+      </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
+    <script src="cordova.js"></script>
+    <script src="cordova_plugins.js"></script>
+    <script src="js/camera.js"></script>
+	<script src="js/geo.js"></script>
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&signed_in=true"></script>
+    <script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/typeahead.js/0.10.5/typeahead.bundle.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/handlebars.js/3.0.3/handlebars.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/list.js/1.1.1/list.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/0.7.3/leaflet.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-markercluster/v0.4.0/leaflet.markercluster.js"></script>
+    <script src="https://api.tiles.mapbox.com/mapbox.js/plugins/leaflet-locatecontrol/v0.43.0/L.Control.Locate.min.js"></script>
+    <script src="assets/leaflet-groupedlayercontrol/leaflet.groupedlayercontrol.js"></script>
+    <script src="assets/js/Google.js"></script>
+
+
+    <script type="text/javascript"  src="assets/js/app.js"></script>
+	<script type="text/javascript"  src="js/ajax.js"></script>
+	    <script src="js/Chart.js"></script>
+		<script src="js/custom.js"></script>
+
+
+<!-- scripts pi ////////////////////////////////////////////// -->
+    <script src="assets/js/pi.js"></script>
+
+  </body>
+</html>
